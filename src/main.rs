@@ -6,7 +6,6 @@ fn main() -> Result<(), Error> {
     let mut stream = TcpStream::connect("88.193.139.141:6969").unwrap();
     println!("Connected to the server!");
 
-    iced::application("Banana-chat", )
 
     let mut out_stream = stream.try_clone().unwrap();
     let _read_thread = thread::spawn(move || {
