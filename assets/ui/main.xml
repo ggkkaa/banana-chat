@@ -1,22 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ui xmlns="http://www.gtk.org/xml/ns/gtk" version="3.0">
-    <window title="Banana Chat" default-width="400" default-height="300">
+<interface>
+    <object id="window" class="GtkWindow">
+        <property name="title">Banana Chat</property>
         <child>
-            <box orientation="vertical" spacing="10">
+            <object id="vbox" class="GtkBox">
+                <property name="orientation">vertical</property>
+
                 <child>
-                    <label label="Loading..."/>
+                    <object id="chatbox" class="GtkBox">
+                        <property name="orientation">vertical</property>
+                        <child>
+                            <object id="chat_scroll" class="GtkScrolledWindow">
+                                <property name="vexpand">true</property>
+                                <child>
+                                    <object id="chatlist" class="GtkListBox">
+                                        <property name="selection-mode">none</property>
+                                    </object>
+                                </child>
+                            </object>
+                        </child>
+                        <child>
+                            <object id="welcome-msg" class="GtkLabel">
+                                <property name="label">Welcome to Bananymous's Chat Group!</property>
+                            </object>
+                        </child>
+                    </object>
                 </child>
+                
+                <child>
+                    <object id="hbox" class="GtkBox">
+                        <property name="orientation">horizontal</property>
+                        <child>
+                            <object id="entry" class="GtkEntry">
+                                <property name="placeholder-text">Message ...</property>
+                                <property name="hexpand">true</property>
+                            </object>
+                        </child>
 
-                <box orientation="horizontal" spacing="10">
-                    <child>
-                        <entry placeholder-text="Message ..."/>
-                    </child>
-
-                    <child>
-                        <button label="Send"></button>
-                    </child>
-                </box>
-            </box>
+                        <child>
+                            <object id="send_button" class="GtkButton">
+                                <property name="label">Send</property>
+                            </object>
+                        </child>
+                    </object>
+                </child>
+            </object>
         </child>
-    </window>
-</ui>
+    </object>
+</interface>
