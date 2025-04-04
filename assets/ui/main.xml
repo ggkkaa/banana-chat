@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui xmlns="http://www.gtk.org/xml/ns/gtk" version="3.0">
+    <window title="Banana Chat" default-width="400" default-height="300">
+        <child>
+            <box orientation="vertical" spacing="10">
+                <child>
+                    <label label="Loading..."/>
+                </child>
+
+                <box orientation="horizontal" spacing="10">
+                    <child>
+                        <entry placeholder-text="Message ..."/>
+                    </child>
+
+                    <child>
+                        <button label="Send"></button>
+                    </child>
+                </box>
+            </box>
+        </child>
+    </window>
+</ui>
