@@ -75,8 +75,6 @@ fn build_ui(app: &Application, stream: Rc<RefCell<TcpStream>>) {
 
     chatlist.append(&join_msg);
 
-    let event_controller = gtk::EventControllerKey::new();
-
     let event_send_field = send_field.clone();
 
     let stream_event = stream.clone();
@@ -91,19 +89,13 @@ fn build_ui(app: &Application, stream: Rc<RefCell<TcpStream>>) {
         STYLE_PROVIDER_PRIORITY_APPLICATION,
     );
 
-    event_controller.connect_key_pressed(move |_, key, _, _| {
-        match key {
-            Key::Return => {
-                let mut stream_event = stream_event.borrow_mut();
+    send_field.connect_activate(move |entry| {
+        let mut stream_event = stream_event.borrow_mut();
 
-                stream_event.write_all(event_send_field.text().as_bytes()).unwrap();
-            }
-            _ => {}
-        }
-        glib::Propagation::Proceed
+        stream_event.write_all(event_send_field.text().as_bytes()).unwrap();
+
+        entry.set_text("");
     });
-
-    send_field.add_controller(event_controller);
 
     let stream_button = stream.clone();
     button.connect_clicked(move |_| {    
