@@ -16,9 +16,11 @@ use std::rc::Rc;
 use std::thread;
 use std::time::Duration;
 
-use gtk::{prelude::*, Button, Entry, Label, ListBox};
+use gtk::ffi::GtkBox;
+use gtk::graphene::Box;
+use gtk::{prelude::*, Button, CssProvider, Entry, Label, ListBox, StyleContext, Widget, STYLE_PROVIDER_PRIORITY_APPLICATION};
 use gtk::{glib, Application, ApplicationWindow, Builder, Window};
-use gdk::Key;
+use gdk::{Display, Key};
 use url::Url;
 
 const APP_ID: &str = "com.bananymous.chat";
@@ -52,10 +54,22 @@ fn build_ui(app: &Application, stream: Rc<RefCell<TcpStream>>) {
     window.set_default_width(800);
     window.set_default_height(600);
 
+    let css = CssProvider::new();
+    css.load_from_bytes(&glib::Bytes::from_static(b"
+    .send_background {
+        background-color: #2f2f2f;
+    }
+
+    .send_background .entry {
+        background-color: #2f2f2f;
+    }
+    "));
+
     let button: Button = builder.object("send_button").expect("Failed to get button from UI file");
+    let hbox: gtk::Box = builder.object("hbox").expect("Failed to get hbox from UI file");
     let send_field: Entry = builder.object("entry").expect("Failed to get entry");
     let chatlist: ListBox = builder.object("chatlist").expect("Failed to get chatlist from UI file");
-    
+
     let join_msg = Label::new(Some("Welcome to Banana Chat!"));
     join_msg.set_xalign(0.0);
 
@@ -66,6 +80,16 @@ fn build_ui(app: &Application, stream: Rc<RefCell<TcpStream>>) {
     let event_send_field = send_field.clone();
 
     let stream_event = stream.clone();
+
+    hbox.add_css_class("send_background");
+    button.add_css_class("entry");
+    send_field.add_css_class("entry");
+
+    gtk::style_context_add_provider_for_display(
+        &Display::default().expect("No Display."),
+        &css,
+        STYLE_PROVIDER_PRIORITY_APPLICATION,
+    );
 
     event_controller.connect_key_pressed(move |_, key, _, _| {
         match key {
