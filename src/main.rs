@@ -9,11 +9,18 @@ use std::time::Duration;
 use gtk::{prelude::*, Button, Entry, Label, ListBox};
 use gtk::{glib, Application, ApplicationWindow, Builder, Window};
 use gdk::Key;
+use url::Url;
 
 const APP_ID: &str = "com.bananymous.chat";
 
 fn main() -> Result<(), Error> {
-    let stream = TcpStream::connect("88.193.139.141:6969").unwrap();
+    let url = Url::parse("tcp://chat.bananymous.com:6969").expect("Invalid URL");
+
+    let host = url.host_str().expect("No host in URL");
+    let port = url.port().unwrap_or(6969);
+    let addr = format!("{}:{}", host, port);
+
+    let stream = TcpStream::connect(addr).unwrap();
     stream.set_nonblocking(true)?;
     println!("Connected to the server!");
 
