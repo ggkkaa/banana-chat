@@ -56,12 +56,22 @@ fn build_ui(app: &Application, stream: Rc<RefCell<TcpStream>>) {
 
     let css = CssProvider::new();
     css.load_from_bytes(&glib::Bytes::from_static(b"
+    .list {
+        background-color: #3f3f3f;
+    }
+    
+    .message {
+        color: white;
+    }
+
     .send_background {
         background-color: #2f2f2f;
+        color: white;
     }
 
     .send_background .entry {
         background-color: #2f2f2f;
+        color: white;
     }
     "));
 
@@ -71,6 +81,7 @@ fn build_ui(app: &Application, stream: Rc<RefCell<TcpStream>>) {
     let chatlist: ListBox = builder.object("chatlist").expect("Failed to get chatlist from UI file");
 
     let join_msg = Label::new(Some("Welcome to Banana Chat!"));
+    join_msg.add_css_class("message");
     join_msg.set_xalign(0.0);
 
     chatlist.append(&join_msg);
@@ -82,6 +93,7 @@ fn build_ui(app: &Application, stream: Rc<RefCell<TcpStream>>) {
     hbox.add_css_class("send_background");
     button.add_css_class("entry");
     send_field.add_css_class("entry");
+    chatlist.add_css_class("list");
 
     gtk::style_context_add_provider_for_display(
         &Display::default().expect("No Display."),
@@ -117,6 +129,7 @@ fn build_ui(app: &Application, stream: Rc<RefCell<TcpStream>>) {
             Ok(n) => {
                 let text = String::from_utf8_lossy(&buf[..n]);
                 let msg = Label::new(Some(&text));
+                msg.add_css_class("message");
                 msg.set_xalign(0.0);
                 chatlist.append(&msg);
             }
