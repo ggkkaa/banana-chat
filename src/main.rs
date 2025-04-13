@@ -9,18 +9,18 @@
 */
 
 use std::cell::RefCell;
-use std::io::{self, Write, Read, Error};
+use std::io::{Write, Read, Error};
 use std::net::TcpStream;
 use std::path::Path;
 use std::rc::Rc;
-use std::thread;
 use std::time::Duration;
 
-use gtk::ffi::GtkBox;
-use gtk::graphene::Box;
-use gtk::{prelude::*, Button, CssProvider, Entry, Label, ListBox, StyleContext, Widget, STYLE_PROVIDER_PRIORITY_APPLICATION};
-use gtk::{glib, Application, ApplicationWindow, Builder, Window};
-use gdk::{Display, Key};
+use gtk::{prelude::*, TextView};
+use gtk::{glib, Application, Builder, Window, Button, CssProvider, Entry, Label, ListBox, STYLE_PROVIDER_PRIORITY_APPLICATION};
+use gdk::Display;
+
+use anes::parser::{KeyCode, KeyModifiers, Parser, Sequence};
+
 use url::Url;
 
 const APP_ID: &str = "com.bananymous.chat";
@@ -78,13 +78,15 @@ fn build_ui(app: &Application, stream: Rc<RefCell<TcpStream>>) {
     let button: Button = builder.object("send_button").expect("Failed to get button from UI file");
     let hbox: gtk::Box = builder.object("hbox").expect("Failed to get hbox from UI file");
     let send_field: Entry = builder.object("entry").expect("Failed to get entry");
-    let chatlist: ListBox = builder.object("chatlist").expect("Failed to get chatlist from UI file");
+    let chatlist: TextView = builder.object("chatlist").expect("Failed to get chatlist from UI file");
+    let chatlist_text = chatlist.buffer();
+    let mut cursor_iter = chatlist_text.iter_at_mark(&chatlist_text.get_insert());
 
     let join_msg = Label::new(Some("Welcome to Banana Chat!"));
     join_msg.add_css_class("message");
     join_msg.set_xalign(0.0);
 
-    chatlist.append(&join_msg);
+    chatlist_text.insert(&mut cursor_iter, &"Welcome to Banana Chat!");
 
     let event_send_field = send_field.clone();
 
@@ -127,11 +129,40 @@ fn build_ui(app: &Application, stream: Rc<RefCell<TcpStream>>) {
                 return glib::ControlFlow::Break;
             }
             Ok(n) => {
-                let text = String::from_utf8_lossy(&buf[..n]);
-                let msg = Label::new(Some(&text));
-                msg.add_css_class("message");
-                msg.set_xalign(0.0);
-                chatlist.append(&msg);
+                let mut text = String::from_utf8_lossy(&buf[..n]);
+
+                // Parse and handle the ansi
+                
+                let mut parser = Parser::default();
+
+                let buffer = text.as_bytes();
+                parser.advance(buffer, false);
+                let parsed_string: &mut String = &mut String::from("");
+                loop {
+
+                    let parsed = parser.next();
+
+
+                    if parsed.is_none() {
+                        break;
+                    }
+                    
+                    match parsed{
+                        Some(Sequence::Key(KeyCode::Char(ch), _)) => {
+                            println!("{}", ch);
+                            parsed_string.push(ch);
+                        }
+                        _ => {}
+                    }
+                    
+                }
+
+                let text_str = parsed_string;
+                text_str.push_str("\n");
+
+                cursor_iter = chatlist_text.iter_at_mark(&chatlist_text.get_insert());
+
+                chatlist_text.insert(&mut cursor_iter, &text_str);
             }
             Err(e) => {
                 eprintln!("Error reading from server: {}", e);

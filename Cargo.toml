@@ -5,6 +5,7 @@ edition = "2024"
 
 
 [dependencies]
+anes = { version = "0.2.0", features = ["parser"] }
 gdk = { version = "0.9.6", package = "gdk4"}
 gtk = { version = "0.9.6", package = "gtk4", features = ["v4_14"] }
 url = "2.5.4"

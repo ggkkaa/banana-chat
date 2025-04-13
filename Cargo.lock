@@ -3,6 +3,15 @@
 version = 4
 
 [[package]]
+name = "anes"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "735d4f398ca57cfa2880225c2bf81c3b9af3be5bb22e44ae70118dad38713e84"
+dependencies = [
+ "bitflags",
+]
+
+[[package]]
 name = "autocfg"
 version = "1.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -12,6 +21,7 @@ checksum = "ace50bade8e6234aa140d9a2f552bbee1db4d353f69b8217bc503490fc1a9f26"
 name = "banana-chat"
 version = "0.2.0"
 dependencies = [
+ "anes",
  "gdk4",
  "gtk4",
  "url",
