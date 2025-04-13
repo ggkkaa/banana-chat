@@ -13,8 +13,9 @@
                             <object id="chat_scroll" class="GtkScrolledWindow">
                                 <property name="vexpand">true</property>
                                 <child>
-                                    <object id="chatlist" class="GtkListBox">
-                                        <property name="selection-mode">none</property>
+                                    <object id="chatlist" class="GtkTextView">
+                                        <property name="editable">false</property>
+                                        <property name="wrap-mode">word</property>
                                     </object>
                                 </child>
                             </object>
